@@ -1,0 +1,10 @@
+# IntelliJ etc
+.idea/
+
+# ignore sampledata/ except defined files
+sampledata/*
+!sampledata/stripe.csv
+
+# Ignore node modules
+node_modules/
+

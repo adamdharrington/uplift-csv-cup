@@ -1,0 +1,11 @@
+{
+  "name": "cup",
+  "version": "0.0.1",
+  "dependencies": {
+    "csv-parser": "^1.9.3",
+    "csv-write-stream": "^1.0.0",
+    "dateformat": "^1.0.12",
+    "lodash": "^4.6.1",
+    "validator": "^5.1.0"
+  }
+}
