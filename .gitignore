@@ -4,6 +4,7 @@
 # ignore sampledata/ except defined files
 sampledata/*
 !sampledata/stripe.csv
+!sampledata/paypal.csv
 
 # Ignore node modules
 node_modules/

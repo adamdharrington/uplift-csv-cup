@@ -7,6 +7,7 @@ var fs = require('fs');
 var _ = require('lodash');
 
 var outputs = {};
+var fileList = [];
 
 
 /*  ------------------ Input and store ---------------- */
@@ -25,8 +26,10 @@ function storeLine(data) {
 function createOutput(name, data){
   "use strict";
   // Should be a stream not an array
-  var writer = csvWriter();
-  writer.pipe(fs.createWriteStream('./sampledata/'+name+'-out.csv'));
+  var writer = csvWriter(),
+    filePath = './sampledata/'+name+'.csv';
+  writer.pipe(fs.createWriteStream(filePath));
+  fileList.push(filePath);
   outputs[name] = writer;
   storeLine(data);
 }
@@ -38,11 +41,10 @@ function getOutputs(done) {
     return "No data";
   }
   _.forEach(outputs, function(out) {
-    // TODO: Process "out" and invoke file writer
     out.end();
   });
   // TODO: Make callback run last somehow
-  done();
+  done(fileList);
 }
 
 
