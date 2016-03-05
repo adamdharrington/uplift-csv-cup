@@ -1,6 +1,9 @@
 # IntelliJ etc
 .idea/
 
+#Tarballs
+*.tgz
+
 # ignore sampledata/ except defined files
 sampledata/*
 !sampledata/stripe.csv

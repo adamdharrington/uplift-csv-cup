@@ -1,6 +1,19 @@
 {
-  "name": "cup",
-  "version": "0.0.1",
+  "name": "uplift-csv-cup",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Adam Harrington <adam.d.harrington@gmail.com> (http://adamharrington.eu)",
+  "description": "A CSV processor for transforming payment logs from PayPal or Stripe (or others if extended) into Engaging Networks transaction imports.",
+  "scripts": {
+    "cli": "node uplift-cup-cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/upliftirl/uplift-cup.git"
+  },
+  "keywords": ["Engaging Networks", "CSV Processing", "Stripe"],
+  "license": "ISC",
   "dependencies": {
     "csv-parser": "^1.9.3",
     "csv-write-stream": "^1.0.0",
