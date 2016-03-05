@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/upliftirl/uplift-cup.git"
+    "url": "git+https://github.com/adamdharrington/uplift-csv-cup.git"
   },
   "keywords": ["Engaging Networks", "CSV Processing", "Stripe"],
   "license": "ISC",
