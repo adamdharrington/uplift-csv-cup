@@ -90,7 +90,7 @@ var Stripe = function(){
       ).toFixed(2);
     return {
       "Time": makeTime(transaction) || "",
-      "Type": formatted.paymentType || "",
+      "Type": getTransactionType(transaction) || "",
       "Campaign Code": "",
       "Status": transaction.Status || "",
       "Currency": formatted.Currency || "",
@@ -180,7 +180,7 @@ var PayPal = function(){
   function getRaw(transaction, formatted){
     return {
       "Time": transaction[" Time"] || "",
-      "Type": formatted.paymentType || "",
+      "Type": getTransactionType(transaction) || "",
       "Status":  transaction[" Status"] || "",
       "Currency": formatted.currency || "",
       "Gross": transaction[" Gross"] || "",
