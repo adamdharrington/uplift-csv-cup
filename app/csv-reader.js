@@ -37,7 +37,6 @@ function init (inputType, outputType, dir, file, callback){
     }))
     .on('data', function (data) {
       // pass data in a sanitised & expected format to out line writer
-      console.log(directory, inputType);
       store.storeLine(format(source, data), directory, inputType);
     })
     .on('end', function () {
