@@ -9,25 +9,29 @@ var path = require('path');
 
 var outputs = {};
 var fileList = [];
+var accounts;
 
 
 /*  ------------------ Input and store ---------------- */
-function storeLine(data, directory) {
+function storeLine(data, directory, gateway) {
   "use strict";
   if (data.hasOwnProperty('dataType')) {
     if (outputs.hasOwnProperty(data.dataType) && data.content.donationAmount > 0) {
       outputs[data.dataType].value  += parseInt(data.content.donationAmount,10);
       outputs[data.dataType].length += parseInt(1, 10);
       outputs[data.dataType].file.write(data.content);
+
+      accountingWriter(data.raw, directory, gateway);
     } else if(data.content.donationAmount <= 0) {
+      accountingWriter(data.raw, directory, gateway);
       return null;
     } else {
-      createOutput(data.dataType,directory, data);
+      createOutput(data.dataType,directory, data, gateway);
     }
   }
   return null;
 }
-function createOutput(name,directory, data){
+function createOutput(name,directory, data, gateway){
   "use strict";
   // Should be a stream not an array
   var writer = csvWriter(),
@@ -41,7 +45,7 @@ function createOutput(name,directory, data){
     length: 0,
     value: 0
   };
-  storeLine(data);
+  storeLine(data, directory, gateway);
 }
 
 /*  ------------------ Output from store ---------------- */
@@ -56,6 +60,22 @@ function getOutputs(done) {
   });
   // TODO: Make callback run last somehow
   done(fileList);
+}
+/*  ------------------ Accounting Raw File ---------------- */
+function accountingWriter(data, dir, gateway) {
+  "use strict";
+  if (!accounts){
+    accounts = csvWriter();
+    var filePath = path.join(dir, '00-'+gateway+'-accounts-raw.csv')
+    accounts.pipe(fs.createWriteStream(filePath));
+    accountingWriter(data, dir, gateway);
+  }
+  else{
+    accounts.write(data);
+  }
+}
+function accountingEnd(){
+  accounts.end();
 }
 /*  ------------------ Output Summary File ---------------- */
 function writeSummary(source, directory) {
@@ -89,5 +109,6 @@ function writeSummary(source, directory) {
 module.exports = {
   storeLine : storeLine,
   getOutputs: getOutputs,
-  writeSummary: writeSummary
+  writeSummary: writeSummary,
+  writeAccounts: accountingEnd
 };

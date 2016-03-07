@@ -21,6 +21,7 @@ var Stripe = function(){
 
   var $_this = this;
   $_this.name = "Stripe";
+  var rawHeaders = ["Time","Type","Campaign Code","Status","Currency","Gross","Refund","Actual","Fee","Tax","Net","Name","From Email Address","Country"];
 
   function calculateAmount (transaction) {
     var _amount = 0;
@@ -33,6 +34,10 @@ var Stripe = function(){
 
   function makeDate (transaction) {
     return new Date(transaction['Created (UTC)']);
+  }
+  function makeTime (transaction) {
+    var date = new Date(transaction['Created (UTC)']);
+    return ""+date.getHours()+":"+date.getMinutes();
   }
 
   function getEmail (transaction) {
@@ -79,6 +84,28 @@ var Stripe = function(){
     return transaction['Currency'].toUpperCase();
   }
 
+  function getRaw(transaction, formatted){
+    var net = (parseFloat(formatted.donationAmount) -
+        (parseFloat(transaction['Fee']) + parseFloat(transaction['Tax']))
+      ).toFixed(2);
+    return {
+      "Time": makeTime(transaction) || "",
+      "Type": formatted.paymentType || "",
+      "Campaign Code": "",
+      "Status": transaction.Status || "",
+      "Currency": formatted.Currency || "",
+      "Gross": transaction['Converted Amount'] || "",
+      "Refund": transaction['Converted Amount Refunded'] || "",
+      "Actual": formatted.donationAmount || "",
+      "Fee": transaction['Fee'] || "",
+      "Tax": transaction['Tax'] || "",
+      "Net": net || "",
+      "Name": transaction['Card Name'] || "",
+      "From Email Address": formatted.email || "",
+      "Country": transaction['Card Address Country'] || ""
+    };
+  }
+
   return {
     name   : $_this.name,
     separator : ",",
@@ -87,7 +114,9 @@ var Stripe = function(){
     getAmount : calculateAmount,
     getDate: makeDate,
     getEmail : getEmail,
-    getPaymentType : getPaymentType
+    getPaymentType : getPaymentType,
+    getRaw : getRaw,
+    getRawHeaders : rawHeaders
   };
 };
 
@@ -96,6 +125,7 @@ var PayPal = function(){
 
   var $_this = this;
   $_this.name = "PayPal";
+  var rawHeaders = ["Time", "Type", "Status", "Currency", "Gross", "Fee", "Net", "Balance", "Name", "From Email Address", "Note"];
 
   function calculateAmount (transaction) {
     var _amount = 0;
@@ -147,6 +177,21 @@ var PayPal = function(){
     }
     return type;
   }
+  function getRaw(transaction, formatted){
+    return {
+      "Time": transaction[" Time"] || "",
+      "Type": formatted.paymentType || "",
+      "Status":  transaction[" Status"] || "",
+      "Currency": formatted.currency || "",
+      "Gross": transaction[" Gross"] || "",
+      "Fee": transaction[" Fee"] || "",
+      "Net": transaction[" Net"] || "",
+      "Balance": transaction[" Balance"] || "",
+      "Name":  transaction[" Name"] || "",
+      "From Email Address": formatted.email || "",
+      "Note": transaction[" Note"] || ""
+    };
+  }
 
   return {
     name : $_this.name,
@@ -156,7 +201,9 @@ var PayPal = function(){
     getAmount : calculateAmount,
     getDate: makeDate,
     getEmail : getEmail,
-    getPaymentType : getPaymentType
+    getPaymentType : getPaymentType,
+    getRaw : getRaw,
+    getRawHeaders : rawHeaders
   };
 };
 

@@ -8,11 +8,11 @@
  * - Use content for formatted output
  */
 var dateFormat = require('dateformat');
+var _ = require('lodash');
 
 
 function formatEN (source, transaction){
   "use strict";
-  // TODO: Store line in correct format
   var output = {
     transactionDate  : dateFormat(source.getDate(transaction), 'isoDate'),
     donationAmount   : source.getAmount(transaction),
@@ -22,13 +22,23 @@ function formatEN (source, transaction){
   };
   return output;
 }
+function formatRaw (source, transaction, formatted){
+  "use strict";
+  return _.extend(
+    {
+      "date": formatted.transactionDate
+    },
+    source.getRaw(transaction, formatted)
+  )
+}
 
-function doFormat (inputType, transaction){
+function doFormat (source, transaction){
   "use strict";
   var output = {};
-  if (!inputType) throw new Error('No valid input type specified', "Err: 001");
-  output.dataType = inputType.getType(transaction);
-  output.content  = formatEN(inputType, transaction);
+  if (!source) throw new Error('No valid input type specified', "Err: 001");
+  output.dataType = source.getType(transaction);
+  output.content  = formatEN(source, transaction);
+  output.raw  = formatRaw(source, transaction, output.content);
   return output;
 }
 

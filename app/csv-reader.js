@@ -15,7 +15,7 @@ function init (inputType, outputType, dir, file, callback){
   var source, directory, destination, inputFile;
   //var inputType = "Stripe", outputType = "Engaging Networks";
   directory = dir  || '/';
-  inputFile = file || './sampledata/stripe2.csv';
+  inputFile = file || './sampledata/stripe.csv';
   if (gateways.hasOwnProperty(inputType)) {
     source = new gateways[inputType]();
   }
@@ -37,7 +37,8 @@ function init (inputType, outputType, dir, file, callback){
     }))
     .on('data', function (data) {
       // pass data in a sanitised & expected format to out line writer
-      store.storeLine(format(source, data), directory);
+      console.log(directory, inputType);
+      store.storeLine(format(source, data), directory, inputType);
     })
     .on('end', function () {
 
