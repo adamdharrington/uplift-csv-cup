@@ -16,12 +16,32 @@
 
 var validator = require('validator');
 
+var sanitiseNumbers = function(n){
+  'use strict';
+  if (n) {
+    return n.replace(/\s/, '').replace(/,/, '.');
+  } else{
+    return "";
+  }
+};
+
 var Stripe = function(){
   "use strict";
 
   var $_this = this;
   $_this.name = "Stripe";
-  var rawHeaders = ["Time","Type","Campaign Code","Status","Currency","Gross","Refund","Actual","Fee","Tax","Net","Name","From Email Address","Country"];
+  var rawHeaders = ["Time","Type","Campaign Code","Status","Currency","Gross","Refund","Actual",
+                    "Fee","Tax","Net","Name","From Email Address","Country"];
+
+  function cleanData (transaction) {
+    return {
+      'Amount' : sanitiseNumbers(transaction['Amount']),
+      'Converted Amount Refunded' : sanitiseNumbers(transaction['Converted Amount Refunded']),
+      'Converted Amount' : sanitiseNumbers(transaction['Converted Amount']),
+      'Fee' : sanitiseNumbers(transaction['Fee']),
+      'Tax' : sanitiseNumbers(transaction['Tax'])
+    };
+  };
 
   function calculateAmount (transaction) {
     var _amount = 0;
@@ -109,6 +129,7 @@ var Stripe = function(){
   return {
     name   : $_this.name,
     separator : ",",
+    cleanData : cleanData,
     getType: getTransactionType,
     getCurrency: getCurrency,
     getAmount : calculateAmount,
@@ -126,6 +147,15 @@ var PayPal = function(){
   var $_this = this;
   $_this.name = "PayPal";
   var rawHeaders = ["Time", "Type", "Status", "Currency", "Gross", "Fee", "Net", "Balance", "Name", "From Email Address", "Note"];
+
+  function cleanData (transaction) {
+    return {
+      'Gross' : sanitiseNumbers(transaction['Gross']),
+      'Fee' : sanitiseNumbers(transaction['Fee']),
+      'Net' : sanitiseNumbers(transaction['Net']),
+      'Balance' : sanitiseNumbers(transaction['Balance'])
+    };
+  };
 
   function calculateAmount (transaction) {
     var _amount = 0;
@@ -196,6 +226,7 @@ var PayPal = function(){
   return {
     name : $_this.name,
     separator : ",",
+    cleanData : cleanData,
     getType: getTransactionType,
     getCurrency : getCurrency,
     getAmount : calculateAmount,

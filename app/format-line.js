@@ -36,6 +36,7 @@ function doFormat (source, transaction){
   "use strict";
   var output = {};
   if (!source) throw new Error('No valid input type specified', "Err: 001");
+  transaction = _.merge({}, transaction, source.cleanData(transaction));
   output.dataType = source.getType(transaction);
   output.content  = formatEN(source, transaction);
   output.raw  = formatRaw(source, transaction, output.content);

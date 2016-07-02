@@ -37,6 +37,7 @@ function init (inputType, outputType, dir, file, callback){
     }))
     .on('data', function (data) {
       // pass data in a sanitised & expected format to out line writer
+      if (!data) throw new Error("Couldn\'t read data");
       store.storeLine(format(source, data), directory, inputType);
     })
     .on('end', function () {
@@ -62,6 +63,9 @@ function init (inputType, outputType, dir, file, callback){
       }
       store = "";
       this.end();
+    })
+    .on('error', function(e){
+      throw new Error("Cup failed to read your file", e);
     });
 }
 
